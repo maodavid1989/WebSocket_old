@@ -72,7 +72,7 @@ $(document).ready(function() {
 	},interval);
 
 	function dataBind(data, ds, className, count){
-    	if(data[1].includes("△")){
+    	if(data[1].indexOf("△") > -1){
     		$('#UpandDown'+count).css("color","red");
     	}else{
     		$('#UpandDown'+count).css("color","green");
