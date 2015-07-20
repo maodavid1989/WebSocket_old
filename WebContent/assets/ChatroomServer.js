@@ -1,5 +1,5 @@
-//url = "ws://localhost:8084/WebSocket/ws"; 
-url = "ws://52.69.57.216:8080/WebSocket/ws"; 
+url = "ws://localhost:8084/WebSocket/ws"; 
+//url = "ws://52.69.57.216:8080/WebSocket/ws"; 
 ws = new WebSocket(url);
 var interval=7000;//間隔(秒)
 //chart
@@ -7,15 +7,21 @@ var margin = {top: 10, right: 30, bottom: 20, left: 30};
 var w = 390 ; // 寬
 var h = 100 ; // 高
 
-var stock =[8086,3105,2455];//股票代號
-var dataset0 = [];
-var dataset1 = [];
-var dataset2 = [];
+var stock =[8086,3105,2455,2890,2891];//股票代號
+var sl=stock.length;
+var dataset=[];
+//取得股票內容
+setInterval(function(){
+	var now =new Date();
+	var msg=now.getHours()+":"+now.getMinutes()+":"+now.getSeconds();
+	ws.send(stock);  
+},interval);
 
 $(document).ready(function() {
 		$('#queryTime').val(interval/1000);
-		for(var i=0; i <stock.length; i++){
+		for(var i=0; i <sl ; i++){
 			appendStock(stock[i],i);
+			dataset.push( { price : [] } );
 		}
 
 		ws.onopen = function() {  
@@ -39,12 +45,10 @@ $(document).ready(function() {
 		    case "OnStock":
 		    	$('#time').empty().append(data.nowTime);
 		    	//資料圖表產生
-		    	dataset0.push(data.JsonArray0[0]);
-		    	dataset1.push(data.JsonArray1[0]);
-		    	dataset2.push(data.JsonArray2[0]);
-		    	dataBind(data.JsonArray0, dataset0, ".demo0",0);
-		    	dataBind(data.JsonArray1, dataset1, ".demo1",1);
-		    	dataBind(data.JsonArray2, dataset2, ".demo2",2);
+		    	for(var i=0 ; i<sl ; i++){
+		    		dataset[i].price.push(eval('data.JsonArray'+i)[0]);
+		    		dataBind(eval('data.JsonArray'+i), dataset[i].price, ".demo"+i, i);
+		    	}
 		    	break;
 		    default:
 		    	alert('system error');
@@ -64,12 +68,6 @@ $(document).ready(function() {
 		+'成交量:&nbsp;<div style="display:inline;" id="Count'+count+'"></div>'
 		+'<br/><div class="demo'+count+'"></div></div>');
 	}
-	//取得股票內容
-	setInterval(function(){
-		var now =new Date();
-		var msg=now.getHours()+":"+now.getMinutes()+":"+now.getSeconds();
-		ws.send(msg);  
-	},interval);
 
 	function dataBind(data, ds, className, count){
     	if(data[1].indexOf("△") > -1){

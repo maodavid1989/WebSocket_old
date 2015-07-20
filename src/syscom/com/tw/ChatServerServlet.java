@@ -58,14 +58,15 @@ public class ChatServerServlet{
     }
     
     @OnMessage
-    public void onMessage(String message) throws Exception {
-    	//System.out.println("parser start");
-    	//add stock number
+    public void onMessage(String stock) throws Exception {
     	List stockNumber= new ArrayList();
-    	stockNumber.add("8086");
-    	stockNumber.add("3105");
-    	stockNumber.add("2455");
-    	
+    	//add stock number
+    	System.out.println(stock);
+    	String[] sa=stock.split(",");
+    	for(int i=0; i<sa.length ; i++){
+    		stockNumber.add(sa[i]);
+    	}
+
     	JSONObject jsonObj= StockParser.stockData(stockNumber);
     	jsonObj.put("type", "OnStock"); 
     	jsonObj.put("nowTime", Dateutil.getYYYY_MM_DD());  //time  		
