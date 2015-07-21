@@ -1,5 +1,5 @@
-url = "ws://localhost:8084/WebSocket/ws"; 
-//url = "ws://52.69.57.216:8080/WebSocket/ws"; 
+//url = "ws://localhost:8084/WebSocket/ws"; 
+url = "ws://52.69.57.216:8080/WebSocket/ws"; 
 ws = new WebSocket(url);
 var interval=7000;//間隔(秒)
 //chart
@@ -72,8 +72,10 @@ $(document).ready(function() {
 	function dataBind(data, ds, className, count){
     	if(data[1].indexOf("△") > -1){
     		$('#UpandDown'+count).css("color","red");
-    	}else{
+    	}else if(data[1].indexOf("▽") > -1){
     		$('#UpandDown'+count).css("color","green");
+    	}else{
+    		$('#UpandDown'+count).css("color","black");
     	}
     	$('#Price'+count).empty().append('<b>'+data[0]+'</b>');
     	$('#UpandDown'+count).empty().empty().append(data[1]);
@@ -84,7 +86,7 @@ $(document).ready(function() {
     	//開盤價
     	//alert((data[3]*1.1).toFixed(2));
     	
-    	dynamicChart(ds, className, (data[3]*1.1).toFixed(2), (data[3]/1.1).toFixed(2));
+    	dynamicChart(ds, className, data[4], data[5]);
 	}
 	
 	
