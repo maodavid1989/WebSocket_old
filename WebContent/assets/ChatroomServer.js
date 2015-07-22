@@ -3,27 +3,20 @@ url = "ws://52.69.57.216:8080/WebSocket/ws";
 ws = new WebSocket(url);
 var interval=7000;//間隔(秒)
 //chart
-var margin = {top: 10, right: 30, bottom: 20, left: 30};
+var margin = {top: 10, right: 40, bottom: 20, left: 40};
 var w = 390 ; // 寬
 var h = 100 ; // 高
 
-var stock =[8086,3105,2455,2890,2891];//股票代號
-var sl=stock.length;
 var dataset=[];
 //取得股票內容
-setInterval(function(){
-	var now =new Date();
-	var msg=now.getHours()+":"+now.getMinutes()+":"+now.getSeconds();
-	ws.send(stock);  
-},interval);
 
 $(document).ready(function() {
 		$('#queryTime').val(interval/1000);
-		for(var i=0; i <sl ; i++){
-			appendStock(stock[i],i);
-			dataset.push( { price : [] } );
+		//web storage
+		if(window.localStorage['stockAll']){
+			$('#stockAll').val(window.localStorage['stockAll']);
 		}
-
+		
 		ws.onopen = function() {  
 			$('#messageTextArea').append("\nconnect to websocket...\n"); 
 		};     
@@ -45,6 +38,8 @@ $(document).ready(function() {
 		    case "OnStock":
 		    	$('#time').empty().append(data.nowTime);
 		    	//資料圖表產生
+		    	
+				var sl=$('#stockAll').val().split(',').length;
 		    	for(var i=0 ; i<sl ; i++){
 		    		dataset[i].price.push(eval('data.JsonArray'+i)[0]);
 		    		dataBind(eval('data.JsonArray'+i), dataset[i].price, ".demo"+i, i);
@@ -57,9 +52,28 @@ $(document).ready(function() {
 		}; 
 });
 
+	function start(){
+		//save to local storage
+		window.localStorage.setItem("stockAll", $('#stockAll').val());
+		
+		var stock=$('#stockAll').val().split(',');
+		var sl=stock.length;
+		for(var i=0; i <sl ; i++){
+			appendStock(stock[i],i);
+			$('#number'+i).val(stock[i]);
+			dataset.push( { price : [] } );
+		}
+
+		setInterval(function(){
+			var now =new Date();
+			var msg=now.getHours()+":"+now.getMinutes()+":"+now.getSeconds();
+			ws.send(stock);  
+		},interval);
+	}
+
 	function appendStock(number, count){
-		$('body').append('<div style="display:inline;"><br/><br/>'
-		+'股票代號:&nbsp;<input id="number" value="'+number+'" size="6" disabled>&nbsp;'
+		$('body').append('<div style="display:inline;" class="mycontent"><br/><br/>'
+		+'股票代號:&nbsp;<input id="number'+count+'" size="6" disabled>&nbsp;'
 		+'成交:&nbsp;<div style="display:inline;" id="Price'+count+'"></div>&nbsp;'
 		+'漲跌:&nbsp;<div style="display:inline;" id="UpandDown'+count+'"></div>&nbsp;'
 		+'開盤:&nbsp;<div style="display:inline;" id="Open'+count+'"></div>&nbsp;'
@@ -93,8 +107,8 @@ $(document).ready(function() {
 	function dynamicChart(ds, className, top , bottom){
 		$(className).html("");
 		var Ymax = top, Ymin = bottom;
-		var widthRange=100;
-		if (ds.length>100){
+		var widthRange=500;
+		if (ds.length>500){
 			widthRange=ds.length;
 		}
 		var xScale = d3.scale.linear().domain([0, widthRange]).range([0, w]);
@@ -112,6 +126,7 @@ $(document).ready(function() {
 		var svg = d3.select(className).append('svg')
 			.attr('width', w + margin.left + margin.right) //將左右補滿
 			.attr('height', h + margin.top + margin.bottom) //上下補滿
+			.attr('class', 'mycontent')
 			.append('g') //增加一個群組g
 			.attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 

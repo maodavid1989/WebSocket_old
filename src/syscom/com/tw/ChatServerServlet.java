@@ -15,6 +15,7 @@ import javax.websocket.OnOpen;
 import javax.websocket.Session;
 import javax.websocket.server.ServerEndpoint;
 
+import org.apache.log4j.Logger;
 import org.json.JSONObject;
 
 @ServerEndpoint(value = "/ws")
@@ -26,6 +27,7 @@ public class ChatServerServlet{
     private final String nickname;
     private Session session;
     
+    Logger logger = Logger.getLogger(ChatServerServlet.class);
     
     public ChatServerServlet() {
         nickname = GUEST_PREFIX + connectionIds.getAndIncrement();
@@ -59,9 +61,10 @@ public class ChatServerServlet{
     
     @OnMessage
     public void onMessage(String stock) throws Exception {
+    	
+    	logger.info("*** WebSocket Received from sessionId " + this.session.getId() );  
     	List stockNumber= new ArrayList();
     	//add stock number
-    	System.out.println(stock);
     	String[] sa=stock.split(",");
     	for(int i=0; i<sa.length ; i++){
     		stockNumber.add(sa[i]);
@@ -70,7 +73,16 @@ public class ChatServerServlet{
     	JSONObject jsonObj= StockParser.stockData(stockNumber);
     	jsonObj.put("type", "OnStock"); 
     	jsonObj.put("nowTime", Dateutil.getYYYY_MM_DD());  //time  		
-    	broadcastJSON(jsonObj.toString());
+        	
+        try {
+        	this.session.getBasicRemote().sendText(jsonObj.toString());
+        } catch (IOException e) {
+            System.out.println("Chat Error: Failed to send message to client");
+            connections.remove(this.session);
+            this.session.close();
+        }
+    	
+    	//broadcastJSON(jsonObj.toString());
     }
  
     //broadcast to front
@@ -78,9 +90,7 @@ public class ChatServerServlet{
     	System.out.println("msg :"+msg);
         for (ChatServerServlet client : connections) {
             try {
-                synchronized (client) {
-                    client.session.getBasicRemote().sendText(msg);
-                }
+                client.session.getBasicRemote().sendText(msg);
             } catch (IOException e) {
                 System.out.println("Chat Error: Failed to send message to client");
                 connections.remove(client);
