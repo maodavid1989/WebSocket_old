@@ -61,30 +61,43 @@ public class ChatServerServlet{
     
     @OnMessage
     public void onMessage(String stock) throws Exception {
-    	
-    	logger.info("*** WebSocket Received from sessionId " + this.session.getId() );  
-    	List stockNumber= new ArrayList();
-    	//add stock number
-    	String[] sa=stock.split(",");
-    	for(int i=0; i<sa.length ; i++){
-    		stockNumber.add(sa[i]);
+    	//logger.info("*** WebSocket Received from sessionId " + this.session.getId() ); 
+    	JSONObject jsonObj;
+    	switch(stock){
+    	case "getTaiwanIndex":
+    		logger.info("*** getTaiwanIndex socket *** ");  
+    		String TaiwanIndex=StockParserUtil.getJsonTaiwanIndex();//取得htmldoc
+    		logger.info("臺指: "+TaiwanIndex);
+    	    jsonObj=new JSONObject(TaiwanIndex);
+    	    jsonObj.put("type", "OnIndex"); 
+    		break;
+    	default:
+    		logger.info("*** getStock socket *** "); 
+    		List stockNumber= new ArrayList();
+        	String[] sa=stock.split(",");
+        	for(int i=0; i<sa.length ; i++){
+        		stockNumber.add(sa[i]);
+        	}
+            jsonObj= StockParserUtil.stockData(stockNumber);
+            logger.info("股票: "+jsonObj);
+        	jsonObj.put("type", "OnStock"); 
+        	jsonObj.put("nowTime", DateUtil.getYYYY_MM_DD());  //time 
+    		break;
     	}
-
-    	JSONObject jsonObj= StockParser.stockData(stockNumber);
-    	jsonObj.put("type", "OnStock"); 
-    	jsonObj.put("nowTime", Dateutil.getYYYY_MM_DD());  //time  		
-        	
+    	sendText(jsonObj);
+    	
+    }
+ 
+    private void sendText(JSONObject jsonObj) throws IOException{
         try {
         	this.session.getBasicRemote().sendText(jsonObj.toString());
         } catch (IOException e) {
             System.out.println("Chat Error: Failed to send message to client");
             connections.remove(this.session);
             this.session.close();
-        }
-    	
-    	//broadcastJSON(jsonObj.toString());
+        }    	
     }
- 
+    
     //broadcast to front
     private static void broadcastJSON(String msg) {
     	System.out.println("msg :"+msg);

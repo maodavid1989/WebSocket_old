@@ -4,64 +4,38 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<meta http-equiv="Content-Type" content="text/html"; charset="utf-8">
 		<title>WS</title>
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a1/jquery.mobile.min.css" />
+		<link rel="stylesheet" href="assets/default.css" />
 	</head>
 	<body>
-		<textarea id="messageTextArea" readonly="readonly" rows="3" cols="40">
-		</textarea>
+	<table>
+		<tr>
+			<td>
+				<textarea id="messageTextArea" readonly="readonly" rows="3" cols="40">
+				</textarea>
+			</td>
+			<td>
+				台灣加權指數  : <div  class="twIndexN" style="display:inline;color:red;font-size:20px"></div>
+				<div class="twIndex"></div>
+			</td>
+			<td style="font-size:32px">
+				<div style="display:inline;" id="time"></div>
+			</td>
+		</tr>
+	</table>
 		間隔:&nbsp;<input id="queryTime" size="2" disabled>秒&nbsp;&nbsp;
-		時間:&nbsp;<div style="display:inline;" id="time"></div>
-		<br/>股票代號:&nbsp;<input id="stockAll" value="2330,8086,1216,8926,2891" size="50">
+		<br/>
+		股票代號:&nbsp;<input id="stockAll" value="2330,8086,1216,8926,2891" size="50">
 		<input type="button" value="start" onclick="this.disabled=true; start()">
 	</body>		
 		
-<script src="assets/plugins/jquery-1.10.2.min.js" type="text/javascript"></script>  
-<script src="assets/ChatroomServer.js" type="text/javascript"></script>  	
+<script src="assets/plugins/jquery-1.10.2.min.js" type="text/javascript"></script>  	
 <script src="assets/plugins/d3.min.js"  type="text/javascript" ></script>
-
-<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a1/jquery.mobile.min.css" />
+<script src="assets/ChatroomServer.js" type="text/javascript"></script>  
+<script src="assets/chartModel.js" type="text/javascript"></script> 
+ 
  <script src="http://code.jquery.com/jquery-1.4.3.min.js"></script>
  <script src="http://code.jquery.com/mobile/1.0a1/jquery.mobile.min.js"></script>
-<style>
-	path {
-		stroke: DodgerBlue;
-		stroke-width: 1;
-		fill: none;
-	}
-	.axis {
-		font-size: 11px;
-		fill: gray;
-	}
-	
-	.x.axis line {
-	  stroke: lightgrey;
-	}
-	
-	.x.axis .minor {
-	  stroke-opacity: .5;
-	}
-	
-	.x.axis path {
-	  stroke: #fafafa;
-	}
-	
-	.y.axis line, .y.axis path {
-	  fill: none;
-	  stroke: lightgrey;
-	}
-	
-@media (min-width: 1000px) {
-  .mycontent
-  {
-    font-size: 100%;
-  }
-}
 
-@media (max-width: 600px) {
-  .mycontent {
-    width:300px;
-    font-size: 80%;
-  }
-}
-	
-</style>
+
 </html>
