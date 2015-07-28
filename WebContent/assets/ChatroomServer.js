@@ -10,6 +10,7 @@ var h = 100 ; // 高
 var dataset=[];
 
 $(document).ready(function() {	
+		$('.sidebar').css('overflow','scroll');
 		$('#queryTime').val(interval/1000);
 		//web storage
 		if(window.localStorage['stockAll']){
@@ -60,6 +61,7 @@ $(document).ready(function() {
 });
 
 	function start(){
+		$('a').attr('disabled', true);
 		//save to local storage
 		window.localStorage.setItem("stockAll", $('#stockAll').val());		
 		var stock=$('#stockAll').val().split(',');//取得股票代號
@@ -106,7 +108,7 @@ $(document).ready(function() {
 	}
 		
 	function appendStock(number, count, arrayAhref){
-		$('body').append('<table border="0" width=100%><tr>'
+		$('.stockAppend').append('<table border="0" width=100%><tr>'
 		+'<td width=60%>'
 		+'<div  class="mycontent"><br/><br/>'
 		+'股票代號:&nbsp;<input id="number'+count+'" size="6" disabled>&nbsp;'
@@ -128,10 +130,13 @@ $(document).ready(function() {
 	}
 
 	function dataBind(data, ds, className, count){
-    	if(data[1].indexOf("△") > -1){
+    	if(data[1].indexOf("△") > -1){//漲
     		$('#UpandDown'+count).css("color","red");
-    	}else if(data[1].indexOf("▽") > -1){
+    	}else if(data[1].indexOf("▽") > -1){//跌
     		$('#UpandDown'+count).css("color","green");
+    	}else if(data[1].indexOf("▲") > -1){//漲停
+    		$('#UpandDown'+count).css("background-color","red");
+    		$('#UpandDown'+count).css("color","black");
     	}else{
     		$('#UpandDown'+count).css("color","black");
     	}

@@ -1,0 +1,44 @@
+	body {
+	  height: 100%; 
+    }
+    
+	path {
+		stroke: DodgerBlue;
+		stroke-width: 1;
+		fill: none;
+	}
+	.axis {
+		font-size: 11px;
+		fill: gray;
+	}
+	
+	.x.axis line {
+	  stroke: lightgrey;
+	}
+	
+	.x.axis .minor {
+	  stroke-opacity: .5;
+	}
+	
+	.x.axis path {
+	  stroke: #fafafa;
+	}
+	
+	.y.axis line, .y.axis path {
+	  fill: none;
+	  stroke: lightgrey;
+	}
+	
+@media (min-width: 1000px) {
+  .mycontent
+  {
+    font-size: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .mycontent {
+    width:500px;
+    font-size: 70%;
+  }
+}
